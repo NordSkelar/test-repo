@@ -24,12 +24,6 @@ On every push or pull request, `.github/workflows/deploy.yml`:
 4. Uploads `game/build/web` as the Pages artifact.
 5. On `main` only, deploys it to `https://<you>.github.io/<repo>/`.
 
-## One-time setup
-
-1. Create a repo on GitHub and push this folder to it on the `main` branch.
-2. In the repo, go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
-3. Push a commit, or run the workflow from the **Actions** tab. When it finishes, the site link appears on the run.
-
 ## Running locally
 
 ```bash
