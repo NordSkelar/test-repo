@@ -1,5 +1,3 @@
-"""Pure game logic for the brick builder. No pygame here, so it's easy to test."""
-
 from dataclasses import dataclass
 
 
