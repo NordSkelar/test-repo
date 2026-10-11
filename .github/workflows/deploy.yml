@@ -1,0 +1,47 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:          # PRs get tested and built, but not deployed
+  workflow_dispatch:     # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stamp version on the title bar
+        run: sed -i "s/^VERSION = .*/VERSION = \"${GITHUB_SHA::7}\"/" game/main.py
+
+      - name: Build the container
+        run: docker build -t brick-builder .
+
+      - name: Run tests and web build inside the container
+        run: docker run --rm -v "$PWD/game:/app/game" brick-builder
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: game/build/web
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
